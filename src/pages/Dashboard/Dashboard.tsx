@@ -8,11 +8,12 @@ import {
   DashboardContent,
   UploadImage
 } from './Dashboard.styles';
-import { getAllImages, uploadImage } from '../../actions/drappgram.action';
+import { getAllImages, tipImageOwner, uploadImage } from '../../actions/drappgram.action';
 import { Image } from '../../shared/entities';
 import { UploadBox } from '../../components/UploadBox/UploadBox';
 import { ImageBox } from '../../components/ImageBox/ImageBox';
 import { TipModal } from '../../components/TipModal/TipModal';
+import { Toastr } from '../../components/Toastr/Toastr';
 
 interface DashboardProps {
   currentAccount: string;
@@ -21,12 +22,14 @@ interface DashboardProps {
 export const Dashboard: React.FC<DashboardProps> = ({ currentAccount }) => {
 
   const [dashboardImages, setDashboardImages] = useState<Image[]>([]);
-  const [showTipModal, setShowTipModal] = useState<boolean>(false);
+  const [showTipModal, setShowTipModal] = useState<boolean | number>(false);
   const [uploadingImage, setUploadingImage] = useState<boolean>(false);
   const [showUploadBox, setShowUploadBox] = useState<boolean>(false);
+  const [toastrMessage, setToastrMessage] = useState<string>(null);
 
   useEffect(() => {
     detectImageUploaded();
+    detectImageTipped();
     getDashboardImages();
   }, []);
   
@@ -53,13 +56,26 @@ export const Dashboard: React.FC<DashboardProps> = ({ currentAccount }) => {
     const imageUploaded = window.contracts.dappgram.ImageUploaded;
     imageUploaded({}, async (err, result) => {
       if (err) throw new Error(err);
-      console.log(result);
       setDashboardImages(_ => [result.returnValues, ..._]);
     })
   }
 
-  const onTipSelected = (value: number): void => {
-    console.log(value);
+  const detectImageTipped = (): void => {
+    const imageTipped = window.contracts.dappgram.ImageTipped;
+    imageTipped({}, async (err, result) => {
+      if (err) throw new Error(err);
+      getDashboardImages();
+      const tipReceived = `${result.returnValues.tipAmount}`;
+      setToastrMessage(`You received a tip of ${window.web3.utils.fromWei(tipReceived, 'ether')} eth`);
+      setTimeout(() => {
+        setToastrMessage(null);
+      }, 3000);
+    });
+  }
+
+  const onTipSelected = async (value: number): Promise<void> => {
+    await tipImageOwner(`${showTipModal}`, currentAccount, `${value}`);
+    setShowTipModal(false);
   }
 
   return (
@@ -78,14 +94,19 @@ export const Dashboard: React.FC<DashboardProps> = ({ currentAccount }) => {
           <>
             <DashboardContent>
               {
-                dashboardImages.map((image, idx) => (
+                dashboardImages.reverse().map((image, idx) => (
                   <ImageBox
                     key={image.hash + idx++}
                     imageHash={image.hash}
                     description={image.description}
-                    setShowTipModal={setShowTipModal}
+                    tip={`${image.tipAmount}`}
+                    isAuthor={image.author === currentAccount}
+                    setShowTipModal={() => setShowTipModal(image.id)}
                   />
                 ))
+              }
+              {
+                dashboardImages.length === 0 && <span>Empty Dashboard</span>
               }
             </DashboardContent>
             <UploadImage onClick={() => setShowUploadBox(true)}>+</UploadImage>
@@ -97,6 +118,9 @@ export const Dashboard: React.FC<DashboardProps> = ({ currentAccount }) => {
           onTipSelected={onTipSelected}
           setShowTipModal={setShowTipModal}
         />
+      )}
+      {toastrMessage && (
+        <Toastr message={toastrMessage} />
       )}
     </DashboardContainer>
   )

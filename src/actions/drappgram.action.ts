@@ -25,3 +25,8 @@ export async function getAllImages(): Promise<Image[]> {
   })) as Image[];
   return images;
 }
+
+export async function tipImageOwner(imageId: string, from: string, value: string): Promise<void> {
+  const contract = window.contracts.dappgram;
+  await contract.tipImageOwner(imageId, { from, value: window.web3.utils.toWei(value) });
+}

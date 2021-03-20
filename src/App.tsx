@@ -6,19 +6,23 @@ import { Navbar } from './components/ui/Navbar/Navbar';
 import { Loading } from './components/ui/Loading/Loading';
 import { getWeb3 } from './ethereum/web3';
 import dappgramContractProvider from './contracts/dappgram.provider';
-import { getImagesCount } from './actions/drappgram.action';
 
 interface AppProps {}
 
 const App: React.FC<AppProps> = () => {
   const [loading, setLoading] = useState<boolean>(true);
+  const [currentBalance, setCurrentBalance] = useState(null);
   const [currentAccount, setCurrentAccount] = useState<string>(null);
-
-  const [imagesCount, setImagesCount] = useState<number>(0);
 
   useEffect(() => {
     initWeb3();
+    detectMetaMaskAccountChange();
   }, []);
+
+  useEffect(() => {
+    if (!currentAccount) return;
+    getBalance();
+  }, [currentAccount])
 
   const initWeb3 = async (): Promise<void> => {
     setLoading(true);
@@ -49,9 +53,22 @@ const App: React.FC<AppProps> = () => {
     })
   }
 
+  const getBalance = async (): Promise<void>  => {
+    const weiBalance = await window.web3.eth.getBalance(currentAccount);
+    setCurrentBalance(weiBalance);
+  }
+
+  const detectMetaMaskAccountChange = (): void => {
+    window.ethereum.on('accountsChanged', async (event) => {
+      const address = event[0];
+      if (!address) return 'Connect with Meta Mask';
+      setCurrentAccount(address);
+    });
+  }
+
   return (
     <AppContainer>
-      <Navbar account={currentAccount} />
+      <Navbar account={currentAccount} balance={currentBalance} />
       {loading ? <Loading /> : <Dashboard currentAccount={currentAccount} />}
     </AppContainer>
   )

@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "truffle-migrate": "truffle migrate --reset",
-    "dev": "npm run truffle-migrate && echo \"Contracts compiled successfully :)\" && npx webpack serve --config webpack.config.js --mode development"
+    "dev": "npx webpack serve --config webpack.config.js --mode development"
   },
   "keywords": [],
   "author": "Luis Castillo",
@@ -39,7 +39,6 @@
     "@types/prop-types": "^15.7.3",
     "@types/styled-components": "^5.1.9",
     "add": "^2.0.6",
-    "babel-polyfill": "^6.26.0",
-    "ipfs-http-client": "^49.0.4"
+    "babel-polyfill": "^6.26.0"
   }
 }

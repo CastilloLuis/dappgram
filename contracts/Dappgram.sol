@@ -25,11 +25,7 @@ contract Dappgram {
   );
 
   event ImageTipped(
-    uint id, 
-    string hash, 
-    string description, 
-    uint tipAmount, 
-    address payable author
+    uint tipAmount
   );
 
   // Create Images
@@ -50,15 +46,14 @@ contract Dappgram {
 
     Image memory image = images[_id];
     address payable author = image.author;
+
+    require(msg.sender != author);
+    
     author.transfer(msg.value); // pay to the image's author
     image.tipAmount += msg.value;
     images[_id] = image;
     emit ImageTipped(
-      _id,
-      image.hash,
-      image.description,
-      image.tipAmount,
-      author
+      msg.value
     );
   }
 

@@ -11,20 +11,34 @@ import {
 interface ImageBoxProps {
   imageHash: string;
   description: string;
-  setShowTipModal: (value: boolean) => void;
+  tip: string;
+  isAuthor: boolean;
+  setShowTipModal: () => void;
 }
 
-export const ImageBox: React.FC<ImageBoxProps> = ({ imageHash, description, setShowTipModal }) => {
+export const ImageBox: React.FC<ImageBoxProps> = ({
+  imageHash,
+  description,
+  tip,
+  isAuthor,
+  setShowTipModal
+}) => {
   return (
     <ImageBoxContainer>
       <ImageBoxWrapper>
         <img loading="lazy" src={getIpfsImage(imageHash)} alt={imageHash} />
-        <span onClick={() => setShowTipModal(true)}>
-          💸
-        </span>
+        {
+          !isAuthor && (
+            <span onClick={() => setShowTipModal()}>
+              💸
+            </span>
+          )
+        }
       </ImageBoxWrapper>
       <DescriptionBox>
-        { description }
+        { description }<br/>
+        <hr />
+        Total Collected: {window.web3.utils.fromWei(tip, 'ether')} eth
       </DescriptionBox>
     </ImageBoxContainer>
   )

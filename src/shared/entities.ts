@@ -1,7 +1,7 @@
 export interface Image {
-  id: string;
+  id: number;
   hash: string;
   description: string;
   tipAmount: number;
-  address: string;
+  author: string;
 };

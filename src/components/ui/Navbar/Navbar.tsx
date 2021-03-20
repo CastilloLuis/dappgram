@@ -5,9 +5,10 @@ import DAppLogo from '../../../assets/dapp.png';
 
 interface NavbarProps {
   account: string;
+  balance: number;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({ account }) => {
+export const Navbar: React.FC<NavbarProps> = ({ account, balance }) => {
   return (
     <NavbarContainer>
       <div>
@@ -17,7 +18,7 @@ export const Navbar: React.FC<NavbarProps> = ({ account }) => {
 
       <ImageContainer>
         <Label>
-          {account}
+          {account} - <span>{balance&&window?.web3?.utils?.fromWei(`${balance}`.toString(), 'ether')} eth</span>
         </Label>
         <img src={`https://www.gravatar.com/avatar/${account}?s=${String(
           Math.max(200, 200),
