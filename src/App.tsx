@@ -1,12 +1,14 @@
 import React from 'react';
+import { AppContainer } from './App.styles';
+import { Navbar } from './components/ui/Navbar/Navbar';
 
 interface AppProps {}
 
 const App: React.FC<AppProps> = () => {
   return (
-    <div>
-      Hello World!
-    </div>
+    <AppContainer>
+      <Navbar />
+    </AppContainer>
   )
 }
 
