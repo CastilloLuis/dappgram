@@ -25,6 +25,7 @@ module.exports = {
       },
       {
         test: /\.(png|jpe?g|gif)$/i,
+        exclude: path.resolve(__dirname, 'node_modules'),
         use: [
           {
             loader: 'file-loader',
