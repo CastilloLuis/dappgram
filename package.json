@@ -19,9 +19,12 @@
     "@types/react": "^17.0.3",
     "@types/react-dom": "^17.0.2",
     "babel-loader": "^8.2.2",
+    "file-loader": "^6.2.0",
     "html-webpack-plugin": "^4.0.0",
+    "node-sass": "^5.0.0",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
+    "sass-loader": "^11.0.1",
     "solc": "^0.7.4",
     "styled-components": "^5.2.1",
     "truffle-contract": "^4.0.31",
@@ -32,6 +35,8 @@
     "webpack-dev-server": "^3.11.2"
   },
   "dependencies": {
+    "@types/styled-components": "^5.1.9",
+    "add": "^2.0.6",
     "babel-polyfill": "^6.26.0"
   }
 }
